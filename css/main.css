@@ -1,0 +1,41 @@
+.edit-button{
+   float: left;
+   margin-right: 25px;
+}
+.edit-button button{
+     background-image: url(img/edit.png);
+     width:16px;
+     height:16px;
+     background-size:16px;
+     background-repeat: no-repeat;
+}
+
+.delete-button button{
+     background-image: url(img/delete.png);
+     width:16px;
+     height:16px;
+     background-size:16px;
+     background-repeat: no-repeat;
+}
+
+.list-element-wrapper{
+    height:32px;
+}
+.list-element{
+    float:left;
+    width:500px;
+    font-size: 16px;
+}
+
+.btn{
+    margin-left:10px;
+}
+
+td{
+    margin:25px;
+    width:250px;
+    
+}
+.table{
+    text-align: center;
+}
