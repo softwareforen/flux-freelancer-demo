@@ -1,0 +1,16 @@
+{
+  "name": "freelancer-manager",
+  "version": "0.0.1",
+  "description": "This is an app to manage the commitment of freelancer and third party staff. The App is set up to show the powers of reactJS",
+  "main": "WebContent/List.html",
+  "dependencies": {
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0",
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tobias Hahn",
+  "license": "ISC"
+}
