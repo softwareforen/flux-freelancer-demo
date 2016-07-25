@@ -95,6 +95,8 @@ let ChangeInput = React.createClass({
 
 //Table
 let TableRowWrapper = React.createClass({
+	
+	
 	changeProperty: function(doubleClickEvent){
 	
 		let propField = doubleClickEvent.target;
@@ -110,7 +112,7 @@ let TableRowWrapper = React.createClass({
 				<td data="name" onDoubleClick={this.changeProperty}>{freelancer.name}</td>
 				<td data="project" onDoubleClick={this.changeProperty}>{freelancer.project}</td>
 				<td data="role" onDoubleClick={this.changeProperty}>{freelancer.role}</td>
-				<td data="startDate" onDoubleClick={this.changeProperty}>{freelancer.startDate}</td>
+				<td data="startDate" onDoubleClick={this.changeProperty} >{freelancer.startDate}</td>
 				<td data="endDate" onDoubleClick={this.changeProperty}>{freelancer.endDate}</td>
 				<td><FreelancerActionComponent freelancer={this.props.freelancer} action="delete" /></td>
 			</tr>
@@ -165,6 +167,8 @@ let TableInput = React.createClass({
 		this.replaceState({freelancer: {}});
 	},
 	
+	
+	
 	render: function() {
 		
 		return (
@@ -184,6 +188,7 @@ let TableInput = React.createClass({
 let storeInstance = new Store();
 
 let table = ReactDOM.render(<Table freelancer={storeInstance} />, document.getElementById('content'));
+
 
 
 
