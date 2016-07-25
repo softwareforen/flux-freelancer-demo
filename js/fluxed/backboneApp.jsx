@@ -1,16 +1,9 @@
 
 let FreelancerDispatcher = new Flux.Dispatcher();
-var userInputFreelancer = {
-			name: '',
-			project: '',
-			startDate: '',
-			endDate: ''
-		};
 
 //###############################      STORES    ################################################################
 
 //Items
-//{teamId:0, freelancer:[]}
 let FreelancerItem = Backbone.Model.extend({
 	attributes: [
 		'name',
@@ -24,7 +17,7 @@ let FreelancerItem = Backbone.Model.extend({
 
 var Store = Backbone.Collection.extend({
     model: FreelancerItem,
-    url: "/free",
+	url: "/free",
     initialize: function(){
         this.dispatchToken = FreelancerDispatcher.register(this.dispatchCallback);
         console.log("init store");
@@ -33,13 +26,19 @@ var Store = Backbone.Collection.extend({
     dispatchCallback: function(payload){
        if(payload.action === "delete"){
 			let itemToRemove = storeInstance.findWhere(payload.item);
-			console.log(payload.item);
 			storeInstance.remove(itemToRemove);
 		}else if(payload.action === "add"){
 			storeInstance.create(payload.item);
 			let input;
 			$('[type = text]').val('');
+		}else if(payload.action === "update"){
+			
+			let itemToUpdate = storeInstance.findWhere(payload.item);
+			payload.item[payload.property] = payload.value;
+			itemToUpdate.set(payload.item); 
+		
 		}
+		
 		ReactDOM.render(<Table freelancer={storeInstance} />, document.getElementById('content'));
     },
 
@@ -57,7 +56,6 @@ let FreelancerActionComponent = React.createClass({
 
 	handleAdd: function(){
 		let freelancer = this.props.freelancer;
-		console.log(freelancer);
 		FreelancerDispatcher.dispatch({action:"add", item:freelancer});
 		
 	},
@@ -82,12 +80,40 @@ let FreelancerActionComponent = React.createClass({
 
 });
 
+let ChangeInput = React.createClass({
+
+	save: function(event){
+		FreelancerDispatcher.dispatch({action:"update", item:this.props.freelancer, property:this.props.property, value:$(event.target).val()});
+	},
+
+	render: function(){
+		return (
+			<input type="text" defaultValue={this.props.value} onBlur={this.save} />
+		);
+	}
+});
+
 //Table
 let TableRowWrapper = React.createClass({
+	changeProperty: function(doubleClickEvent){
+	
+		let propField = doubleClickEvent.target;
+		let val = $(propField).text();
+		let propName = $(propField).attr('data');
+		ReactDOM.render(<ChangeInput property={propName} value={val} freelancer={this.props.freelancer} />,propField);
+		
+	},
 	render: function(){
-		let freelancer = this.props.freelancer;
+		let freelancer = this.props.freelancer.toJSON();
 		return (
-			<tr id={freelancer.id}><td>{freelancer.name}</td><td>{freelancer.project}</td><td>{freelancer.role}</td><td>{freelancer.startDate}</td><td>{freelancer.endDate}</td><td><FreelancerActionComponent freelancer={freelancer} action="delete" /></td></tr>
+			<tr>
+				<td data="name" onDoubleClick={this.changeProperty}>{freelancer.name}</td>
+				<td data="project" onDoubleClick={this.changeProperty}>{freelancer.project}</td>
+				<td data="role" onDoubleClick={this.changeProperty}>{freelancer.role}</td>
+				<td data="startDate" onDoubleClick={this.changeProperty}>{freelancer.startDate}</td>
+				<td data="endDate" onDoubleClick={this.changeProperty}>{freelancer.endDate}</td>
+				<td><FreelancerActionComponent freelancer={this.props.freelancer} action="delete" /></td>
+			</tr>
 		);
 	}
 });
@@ -103,7 +129,7 @@ let Table = React.createClass({
 	
 
 	render: function(){
-		let freelancer = this.state.freelancer.toJSON();
+		let freelancer = this.state.freelancer;
 		return (
 				<div className="table-wrapper">
 					<table className="table table-striped">
@@ -111,10 +137,10 @@ let Table = React.createClass({
 						<tr><th>Name</th><th>Projekt</th><th>Rolle</th><th>Start</th><th>Ende</th><th>Actions</th></tr>
 						{
 							freelancer.map(function(freelancer, index){
-								return <TableRowWrapper key={freelancer.id} freelancer={freelancer} />;
+								return <TableRowWrapper key={index} freelancer={freelancer} />;
 							})
 						}
-						<TableInput />
+						<TableInput freelancer={{}} />
 						</tbody>
 					</table>
 				</div>
@@ -124,33 +150,31 @@ let Table = React.createClass({
 let TableInput = React.createClass({
 
 	getInitialState: function(){
-		return {freelancer: userInputFreelancer};
+		return {freelancer: {}};
 	},
 
 	updateFreelancerDto : function(change){
 		let propName = change.target.getAttribute('data');
 		let propVal = change.target.value;
-		let freelancer = this.state.freelancer;
-		freelancer[propName] = propVal; 
-		this.setState({freelancer: freelancer});
-		
+		let freelancer = this.props.freelancer;
+		freelancer[propName] = propVal;
 		 
 	},
 	
 	componentWillReceiveProps: function(){
-		this.replaceState({freelancer: userInputFreelancer});
+		this.replaceState({freelancer: {}});
 	},
 	
 	render: function() {
 		
 		return (
 			<tr>
-				<td><input type="text" data="name" id="freelancerName"  defaultValue={this.state.freelancer.name} onChange={this.updateFreelancerDto} /> </td>
-				<td><input type="text" data="project" id="freelancerProject"  defaultValue={this.state.freelancer.project} onChange={this.updateFreelancerDto} /> </td>
-				<td><input type="text" data="project" id="freelancerProject"  defaultValue={this.state.freelancer.role} onChange={this.updateFreelancerDto} /> </td>
-				<td><input type="text" data="startDate" id="freelancerStartDate"  defaultValue={this.state.freelancer.startDate} onChange={this.updateFreelancerDto} /> </td>
-				<td><input type="text" data="endDate" id="freelancerEndDate"  defaultValue={this.state.freelancer.endDate} onChange={this.updateFreelancerDto} /> </td>
-				<td><FreelancerActionComponent freelancer={this.state.freelancer} action="add" /></td>
+				<td><input type="text" data="name" id="freelancerName"  defaultValue={this.props.freelancer.name} onChange={this.updateFreelancerDto} /> </td>
+				<td><input type="text" data="project" id="freelancerProject"  defaultValue={this.props.freelancer.project} onChange={this.updateFreelancerDto} /> </td>
+				<td><input type="text" data="role" id="freelancerProject"  defaultValue={this.props.freelancer.role} onChange={this.updateFreelancerDto} /> </td>
+				<td><input type="text" data="startDate" id="freelancerStartDate"  defaultValue={this.props.freelancer.startDate} onChange={this.updateFreelancerDto} /> </td>
+				<td><input type="text" data="endDate" id="freelancerEndDate"  defaultValue={this.props.freelancer.endDate} onChange={this.updateFreelancerDto} /> </td>
+				<td><FreelancerActionComponent freelancer={this.props.freelancer} action="add" /></td>
 			</tr>
 		);
 	}
@@ -158,7 +182,7 @@ let TableInput = React.createClass({
 
 
 let storeInstance = new Store();
-console.log(storeInstance.toJSON());
+
 let table = ReactDOM.render(<Table freelancer={storeInstance} />, document.getElementById('content'));
 
 
