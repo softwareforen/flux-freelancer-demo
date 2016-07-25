@@ -13,15 +13,22 @@ var Store = Backbone.Collection.extend({
     initialize: function(){
         this.dispatchToken = FreelancerDispatcher.register(this.dispatchCallback);
         console.log("init store");
-        this.add(list[0].freelancer);
-        
-    },
+        this.add(list);
+	
+	},
     dispatchCallback: function(payload){
         if(payload.action === "add"){
 			    //FreelancerStore.freelancerList.push(payload.item)
 				console.log(storeInstance.add(payload.item));	
                 console.log(storeInstance);
 			}
+		if(payload.action === "delete"){
+			console.log("delete")
+			let itemToRemove = storeInstance.findWhere(payload.freelancer);
+			storeInstance.remove(itemToRemove);
+			console.log(storeInstance.toJSON());
+			ReactDOM.render(<Table freelancer={storeInstance} />, document.getElementById('content'));
+		}
     },
 
 });
@@ -31,16 +38,18 @@ console.log(storeInstance.toJSON());
 //##############################     Views     ######################################################################
 
 let FreelancerAddComponent = React.createClass({
-	handleClick: function(changeEvent){
-		console.log("Add Freelancer");
-		FreelancerDispatcher.dispatch({action:"add", item:"Hello"});
+	handleDelete: function(clickEvent){
+	
+		let freelancer = this.props.freelancer;
+
+		FreelancerDispatcher.dispatch({action:"delete", item:"Hello", freelancer:freelancer});
 		
 	},
 	render: function(){
 		
 		return (
 			<div>
-				<a href="#"  onClick={this.handleClick}>Add</a>
+				<a href="#" data={this.props.freelancer} onClick={this.handleDelete}>Delete</a>
             </div>	
 		);
 	}
@@ -48,17 +57,27 @@ let FreelancerAddComponent = React.createClass({
 });
 
 //Table
-class Table extends React.Component{
-	
-	constructor(){
-		super();
-		
-	}
-	componentDidMount(){
-	}
-
-	render(){
+let TableRowWrapper = React.createClass({
+	render: function(){
 		let freelancer = this.props.freelancer;
+		return (
+			<tr id={freelancer.id}><td>{freelancer.name}</td><td>{freelancer.project}</td><td>{freelancer.startDate}</td><td>{freelancer.startDate}</td><td><FreelancerAddComponent freelancer={freelancer} onClick={this.handleDelete}/></td></tr>
+		);
+	}
+});
+
+let Table = React.createClass({
+	
+	getInitialState: function(){
+		return {freelancer: storeInstance};
+	},
+
+	componentDidMount: function(){
+	},
+	
+
+	render: function(){
+		let freelancer = this.state.freelancer.toJSON();
 		return (
 				<div className="table-wrapper">
 					<table className="table table-striped">
@@ -66,7 +85,7 @@ class Table extends React.Component{
 						<tr><th>Name</th><th>Projekt</th><th>Start</th><th>Ende</th><th>Actions</th></tr>
 						{
 							freelancer.map(function(freelancer, index){
-								return (<tr><td>{freelancer.name}</td><td>{freelancer.project}</td><td>{freelancer.startDate}</td><td>{freelancer.startDate}</td><td><FreelancerAddComponent /></td></tr>);
+								return <TableRowWrapper key={freelancer.id} freelancer={freelancer} />;
 							})
 						}
 						</tbody>
@@ -74,10 +93,10 @@ class Table extends React.Component{
 				</div>
 				);
 	}
-}
+});
 
 
+let table = ReactDOM.render(<Table freelancer={storeInstance} />, document.getElementById('content'));
 
-ReactDOM.render(<Table freelancer={storeInstance.toJSON()} />, document.getElementById('content'));
 
 
