@@ -2,12 +2,13 @@
   "name": "freelancer-manager",
   "version": "0.0.1",
   "description": "This is an app to manage the commitment of freelancer and third party staff. The App is set up to show the powers of reactJS",
-  "main": "WebContent/List.html",
+  "main": "freeBackbone.html",
   "dependencies": {
-    "react": "^15.1.0",
-    "react-dom": "^15.1.0",
     "backbone": "^1.3.3",
-    "flux": "^2.1.1"
+    "flux": "^2.1.1",
+    "jquery": "^3.1.0",
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0"
   },
   "devDependencies": {
     "flux": "^2.1.1",
