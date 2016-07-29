@@ -71,3 +71,22 @@ So the following steps have to be done.
 4. run
 	npm install
 5. Open the HTML-File in the browser
+
+## Next steps
+
+At the moment the code is not modular at all. Since we need to find out, how to use [Asynchronous Module Definition-Specification (AMD)](https://en.wikipedia.org/wiki/Asynchronous_module_definition), the code is not modular at the moment. This leads to a bad understanding and untestable code.
+Basically AMD is often done with [requirejs](https://en.wikipedia.org/wiki/Asynchronous_module_definition).
+Javascript is an dynamically typed scriptlanguage which is interpreted only and therfore just throws errors at runtime. As we are used to statically typed programming languages like java we love compilers and types!
+The solution for this difference ist [Typescript](http://www.typescriptlang.org/).
+It is made by Microsoft and described as an *Typed Superset of Javascript*.
+We can use it to provide types and modularize the code in an Object-Oriented or functional way. But to do so, we have to concider that the libraries used are written in js mostly and need to be wrapped in typescript type definitions. So we are dependant on third parties providing those definitions or need to create them on our own. Finally every typedefinition has to be worked on. If we have a look on the dependencies there is much to do.
+
+To put it in a nutshell the following steps have to be done.
+
+1. Create an persitence layer
+	* Elasticsearch for its ease of use and flexibillity
+2. Learn require js
+3. Transfer the code to typescript
+	* Firstly require than the other libs
+
+
