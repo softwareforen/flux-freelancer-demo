@@ -47,6 +47,7 @@ var Store = Backbone.Collection.extend({
 //##############################     Views     ######################################################################
 
 let FreelancerActionComponent = React.createClass({
+	
 	handleDelete: function(clickEvent){
 	
 		let freelancer = this.props.freelancer;
@@ -151,23 +152,13 @@ let Table = React.createClass({
 });
 let TableInput = React.createClass({
 
-	getInitialState: function(){
-		return {freelancer: {}};
-	},
-
+	
 	updateFreelancerDto : function(change){
 		let propName = change.target.getAttribute('data');
 		let propVal = change.target.value;
 		let freelancer = this.props.freelancer;
 		freelancer[propName] = propVal;
-		 
 	},
-	
-	componentWillReceiveProps: function(){
-		this.replaceState({freelancer: {}});
-	},
-	
-	
 	
 	render: function() {
 		
