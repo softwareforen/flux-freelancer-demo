@@ -1,6 +1,13 @@
 
 let FreelancerDispatcher = new Flux.Dispatcher();
 
+function Action(action,item, property, value){
+	this.action = action;
+	this.item = item;
+	this.property = property;
+	this.value = value;
+}
+
 //###############################      STORES    ################################################################
 
 //Items
@@ -19,7 +26,7 @@ var Store = Backbone.Collection.extend({
     model: FreelancerItem,
 	url: "/free",
     initialize: function(){
-        this.dispatchToken = FreelancerDispatcher.register(this.dispatchCallback);
+        FreelancerDispatcher.register(this.dispatchCallback);
         console.log("init store");
         this.add(list);
 	},
@@ -51,13 +58,13 @@ let FreelancerActionComponent = React.createClass({
 	handleDelete: function(clickEvent){
 	
 		let freelancer = this.props.freelancer;
-		FreelancerDispatcher.dispatch({action:"delete", item:freelancer});
+		FreelancerDispatcher.dispatch(new Action("delete",freelancer));
 		
 	},
 
 	handleAdd: function(){
 		let freelancer = this.props.freelancer;
-		FreelancerDispatcher.dispatch({action:"add", item:freelancer});
+		FreelancerDispatcher.dispatch(new Action("add",freelancer));
 		
 	},
 
@@ -84,7 +91,7 @@ let FreelancerActionComponent = React.createClass({
 let ChangeInput = React.createClass({
 
 	save: function(event){
-		FreelancerDispatcher.dispatch({action:"update", item:this.props.freelancer, property:this.props.property, value:$(event.target).val()});
+		FreelancerDispatcher.dispatch(new Action("update",this.props.freelancer, this.props.property, $(event.target).val()));
 	},
 
 	render: function(){
@@ -179,7 +186,3 @@ let TableInput = React.createClass({
 let storeInstance = new Store();
 
 let table = ReactDOM.render(<Table freelancer={storeInstance} />, document.getElementById('content'));
-
-
-
-
